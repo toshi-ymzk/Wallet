@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15508"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="WalletViewControllerB" customModule="Wallet" customModuleProvider="target">
+            <connections>
+                <outlet property="collectionView" destination="7cE-nO-klU" id="ABk-gB-Tdi"/>
+                <outlet property="selectedMethodView" destination="eJ9-io-iPa" id="s6Y-9Q-UU4"/>
+                <outlet property="view" destination="iN0-l3-epB" id="QLG-rj-LWC"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" delaysContentTouches="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="7cE-nO-klU">
+                    <rect key="frame" x="0.0" y="372" width="414" height="524"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="16" minimumInteritemSpacing="16" id="JhN-i2-MrU">
+                        <size key="itemSize" width="50" height="50"/>
+                        <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                        <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                        <inset key="sectionInset" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
+                    </collectionViewFlowLayout>
+                </collectionView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eJ9-io-iPa" customClass="PaymentMethodView" customModule="Wallet" customModuleProvider="target">
+                    <rect key="frame" x="16" y="104" width="382" height="236"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="eJ9-io-iPa" secondAttribute="height" multiplier="1.618:1" id="wW7-ta-gxZ"/>
+                    </constraints>
+                    <viewLayoutGuide key="safeArea" id="4dW-EJ-qoP"/>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5Ft-1G-iQy" userLabel="Navigation View">
+                    <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MS3-c7-IZo">
+                            <rect key="frame" x="0.0" y="0.0" width="44" height="44"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="44" id="o6m-9A-Cvz"/>
+                                <constraint firstAttribute="width" constant="44" id="uAX-Xa-dMX"/>
+                            </constraints>
+                            <state key="normal" image="icon_close_button_red"/>
+                            <connections>
+                                <action selector="dismiss" destination="-1" eventType="touchUpInside" id="leE-p4-RKZ"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="MS3-c7-IZo" firstAttribute="leading" secondItem="5Ft-1G-iQy" secondAttribute="leading" id="EgZ-lm-rN8"/>
+                        <constraint firstAttribute="height" constant="44" id="NSD-3L-rBb"/>
+                        <constraint firstItem="MS3-c7-IZo" firstAttribute="centerY" secondItem="5Ft-1G-iQy" secondAttribute="centerY" id="lbe-H3-khm"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+            <constraints>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="5Ft-1G-iQy" secondAttribute="trailing" id="5fE-Pd-Wmi"/>
+                <constraint firstItem="eJ9-io-iPa" firstAttribute="top" secondItem="5Ft-1G-iQy" secondAttribute="bottom" constant="16" id="FaH-YH-97v"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="7cE-nO-klU" secondAttribute="trailing" id="IN1-QC-eiz"/>
+                <constraint firstAttribute="bottom" secondItem="7cE-nO-klU" secondAttribute="bottom" id="LrL-81-Bs5"/>
+                <constraint firstItem="7cE-nO-klU" firstAttribute="top" secondItem="eJ9-io-iPa" secondAttribute="bottom" constant="32" id="QAU-9U-mhl"/>
+                <constraint firstItem="7cE-nO-klU" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="Vai-1a-SW9"/>
+                <constraint firstItem="5Ft-1G-iQy" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="b8M-F7-rbT"/>
+                <constraint firstItem="eJ9-io-iPa" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" constant="-16" id="h8H-Zz-W0f"/>
+                <constraint firstItem="eJ9-io-iPa" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="16" id="hTw-44-oE7"/>
+                <constraint firstItem="5Ft-1G-iQy" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="ju1-hB-NlF"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <point key="canvasLocation" x="92.753623188405811" y="207.58928571428569"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="icon_close_button_red" width="19" height="19"/>
+    </resources>
+</document>

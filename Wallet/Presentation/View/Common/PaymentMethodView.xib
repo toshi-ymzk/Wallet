@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15508"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="PaymentMethodView" customModule="Wallet" customModuleProvider="target">
+            <connections>
+                <outlet property="accountNumber" destination="hQg-Rz-eH5" id="1he-dY-FdP"/>
+                <outlet property="accountNumberBottom" destination="Dnv-ck-mOn" id="Ogg-n6-h6Z"/>
+                <outlet property="accountNumberLeft" destination="jot-Mm-cLR" id="xEN-hK-GqY"/>
+                <outlet property="brandName" destination="wdS-A4-WSB" id="KEY-xf-Zg8"/>
+                <outlet property="brandNameLeft" destination="ZeQ-6Y-kH3" id="Xle-nX-n7I"/>
+                <outlet property="brandNameTop" destination="fRu-7a-p3T" id="h99-Qo-dJA"/>
+                <outlet property="cardView" destination="Plb-Fv-8lX" id="ZLu-aK-HjY"/>
+                <outlet property="lightGradientView" destination="c65-kr-gv7" id="CZK-84-hf8"/>
+                <outlet property="logoImage" destination="DJ8-mN-DVv" id="tIO-aF-dQt"/>
+                <outlet property="logoImageHeight" destination="3aD-fb-ygz" id="wNG-oA-dqz"/>
+                <outlet property="logoImageRight" destination="nQf-E9-RcM" id="SUO-XP-2Zz"/>
+                <outlet property="logoImageTop" destination="jCn-Oi-qBp" id="7xP-tX-On1"/>
+                <outlet property="logoImageWidth" destination="EKf-CJ-ZOz" id="ucq-Lu-yLv"/>
+                <outlet property="shadowGradientView" destination="VpD-hH-qY3" id="mci-4B-QR8"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="6Ak-1N-Ua0" customClass="BounceView" customModule="Wallet" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="315" height="187"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Plb-Fv-8lX">
+                    <rect key="frame" x="0.0" y="0.0" width="315" height="187"/>
+                    <subviews>
+                        <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="VISA" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wdS-A4-WSB">
+                            <rect key="frame" x="20" y="20" width="42.5" height="21.5"/>
+                            <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0000 00..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hQg-Rz-eH5">
+                            <rect key="frame" x="20" y="145.5" width="92.5" height="21.5"/>
+                            <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="DJ8-mN-DVv">
+                            <rect key="frame" x="232" y="20" width="63" height="63"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="63" id="3aD-fb-ygz"/>
+                                <constraint firstAttribute="width" constant="63" id="EKf-CJ-ZOz"/>
+                            </constraints>
+                        </imageView>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VpD-hH-qY3">
+                            <rect key="frame" x="0.0" y="0.0" width="315" height="187"/>
+                        </view>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="c65-kr-gv7">
+                            <rect key="frame" x="0.0" y="0.0" width="315" height="187"/>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="trailing" secondItem="c65-kr-gv7" secondAttribute="trailing" id="46c-Ib-aOM"/>
+                        <constraint firstItem="c65-kr-gv7" firstAttribute="top" secondItem="Plb-Fv-8lX" secondAttribute="top" id="C8Y-Zu-NDK"/>
+                        <constraint firstAttribute="bottom" secondItem="hQg-Rz-eH5" secondAttribute="bottom" constant="20" id="Dnv-ck-mOn"/>
+                        <constraint firstItem="wdS-A4-WSB" firstAttribute="leading" secondItem="Plb-Fv-8lX" secondAttribute="leading" constant="20" id="ZeQ-6Y-kH3"/>
+                        <constraint firstAttribute="bottom" secondItem="VpD-hH-qY3" secondAttribute="bottom" id="ZmM-NQ-gvn"/>
+                        <constraint firstItem="wdS-A4-WSB" firstAttribute="top" secondItem="Plb-Fv-8lX" secondAttribute="top" constant="20" id="fRu-7a-p3T"/>
+                        <constraint firstAttribute="bottom" secondItem="c65-kr-gv7" secondAttribute="bottom" id="gl7-Nr-PkY"/>
+                        <constraint firstItem="DJ8-mN-DVv" firstAttribute="top" secondItem="Plb-Fv-8lX" secondAttribute="top" constant="20" id="jCn-Oi-qBp"/>
+                        <constraint firstItem="hQg-Rz-eH5" firstAttribute="leading" secondItem="Plb-Fv-8lX" secondAttribute="leading" constant="20" id="jot-Mm-cLR"/>
+                        <constraint firstItem="VpD-hH-qY3" firstAttribute="leading" secondItem="Plb-Fv-8lX" secondAttribute="leading" id="mxN-Im-5Zt"/>
+                        <constraint firstAttribute="trailing" secondItem="DJ8-mN-DVv" secondAttribute="trailing" constant="20" id="nQf-E9-RcM"/>
+                        <constraint firstItem="VpD-hH-qY3" firstAttribute="top" secondItem="Plb-Fv-8lX" secondAttribute="top" id="svV-Zz-Mvf"/>
+                        <constraint firstItem="c65-kr-gv7" firstAttribute="leading" secondItem="Plb-Fv-8lX" secondAttribute="leading" id="xtI-ps-zwt"/>
+                        <constraint firstAttribute="trailing" secondItem="VpD-hH-qY3" secondAttribute="trailing" id="zuJ-i1-Ail"/>
+                    </constraints>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                            <real key="value" value="10"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                </view>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="Plb-Fv-8lX" secondAttribute="bottom" id="Jv1-Rl-vAq"/>
+                <constraint firstItem="Plb-Fv-8lX" firstAttribute="top" secondItem="6Ak-1N-Ua0" secondAttribute="top" id="dgt-Wq-BhK"/>
+                <constraint firstAttribute="trailing" secondItem="Plb-Fv-8lX" secondAttribute="trailing" id="mb0-9r-jbK"/>
+                <constraint firstItem="Plb-Fv-8lX" firstAttribute="leading" secondItem="6Ak-1N-Ua0" secondAttribute="leading" id="qDv-3k-gfh"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="ROP-FV-nMh"/>
+            <point key="canvasLocation" x="138.40000000000001" y="152.47376311844079"/>
+        </view>
+    </objects>
+</document>

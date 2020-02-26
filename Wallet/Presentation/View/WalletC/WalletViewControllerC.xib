@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15508"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="WalletViewControllerC" customModule="Wallet" customModuleProvider="target">
+            <connections>
+                <outlet property="collectionView" destination="NhV-Ys-aLX" id="KkW-nn-5wG"/>
+                <outlet property="view" destination="iN0-l3-epB" id="jO6-Ng-th7"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" delaysContentTouches="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="NhV-Ys-aLX">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="1242"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="NhV-Ys-aLX" secondAttribute="height" multiplier="1:3" id="zLo-za-XCu"/>
+                    </constraints>
+                    <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="zK3-ye-Vel">
+                        <size key="itemSize" width="50" height="50"/>
+                        <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                        <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                        <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                    </collectionViewFlowLayout>
+                </collectionView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oTk-5i-JTF">
+                    <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="D1a-o5-SHe">
+                            <rect key="frame" x="0.0" y="0.0" width="44" height="44"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="44" id="Ez0-8h-Gvh"/>
+                                <constraint firstAttribute="width" constant="44" id="UcZ-lX-yY3"/>
+                            </constraints>
+                            <state key="normal" image="icon_close_button_red"/>
+                            <connections>
+                                <action selector="dismiss" destination="-1" eventType="touchUpInside" id="5Fg-hx-hhV"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="D1a-o5-SHe" firstAttribute="leading" secondItem="oTk-5i-JTF" secondAttribute="leading" id="MPY-fI-S8R"/>
+                        <constraint firstItem="D1a-o5-SHe" firstAttribute="centerY" secondItem="oTk-5i-JTF" secondAttribute="centerY" id="fWN-Es-6yV"/>
+                        <constraint firstAttribute="height" constant="44" id="fpw-nC-A8O"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+            <constraints>
+                <constraint firstItem="NhV-Ys-aLX" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="4nd-I2-rJ1"/>
+                <constraint firstAttribute="trailing" secondItem="oTk-5i-JTF" secondAttribute="trailing" id="HWL-HE-LcL"/>
+                <constraint firstItem="oTk-5i-JTF" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="OKe-F6-Vcx"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="NhV-Ys-aLX" secondAttribute="trailing" id="Sus-v3-Kke"/>
+                <constraint firstItem="oTk-5i-JTF" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="geR-dn-32r"/>
+                <constraint firstItem="NhV-Ys-aLX" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="gzc-rk-q4C"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <point key="canvasLocation" x="139" y="154"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="icon_close_button_red" width="19" height="19"/>
+    </resources>
+</document>

@@ -1,0 +1,62 @@
+{
+    "bank_account_max_limit": 10,
+    "credit_cards": [{
+        "card_brand": "Visa",
+        "card_no": "4111 11XX XXXX XXXX",
+        "card_seq": 138,
+        "card_type": "VISA",
+        "expire": 2001,
+        "holder_name": "TOSHIHIRO YAMAZAKI"
+    }, {
+        "card_brand": "Master Card",
+        "card_no": "5111 11XX XXXX XXXX",
+        "card_seq": 139,
+        "card_type": "MASTER",
+        "expire": 2001,
+        "holder_name": "TOSHIHIRO YAMAZAKI"
+    }, {
+        "card_brand": "American Express",
+        "card_no": "6111 11XX XXXX XXXX",
+        "card_seq": 140,
+        "card_type": "AMEX",
+        "expire": 2001,
+        "holder_name": "TOSHIHIRO YAMAZAKI"
+    }, {
+        "card_brand": "Visa",
+        "card_no": "7111 11XX XXXX XXXX",
+        "card_seq": 141,
+        "card_type": "VISA",
+        "expire": 2001,
+        "holder_name": "TOSHIHIRO YAMAZAKI"
+    }, {
+        "card_brand": "JCB",
+        "card_no": "8111 11XX XXXX XXXX",
+        "card_seq": 142,
+        "card_type": "JCB",
+        "expire": 2001,
+        "holder_name": "TOSHIHIRO YAMAZAKI"
+    }],
+    "bank_accounts": [{
+        "account_item": "普通",
+        "account_number": "XXX0849",
+        "bank_code": "9900",
+        "bank_name": "ゆうちょ銀行",
+        "bank_seq": 56,
+        "bg_color": "#008C38",
+        "branch_code": "932",
+        "branch_name": "",
+        "fg_color": "#FFFFFF",
+        "logo_url": ""
+    }, {
+        "account_item": "当座",
+        "account_number": "XXX0849",
+        "bank_code": "0001",
+        "bank_name": "みずほ銀行",
+        "bank_seq": 55,
+        "bg_color": "#0A287E",
+        "branch_code": "211",
+        "branch_name": "青山",
+        "fg_color": "#FFFFFF",
+        "logo_url": ""
+    }]
+}
