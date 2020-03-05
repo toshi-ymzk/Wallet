@@ -1,0 +1,38 @@
+name: Wallet
+settingGroups:
+  commonSettings:
+    DEVELOPMENT_TEAM: 333AB33F4Z
+targets:
+  Wallet:
+    type: application
+    platform: iOS
+    sources: Wallet
+    settings:
+      groups: [commonSettings]
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: toshihiro.yamazaki.com.Wallet
+        INFOPLIST_FILE: Wallet/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        TARGETED_DEVICE_FAMILY: 1
+        IPHONEOS_DEPLOYMENT_TARGET: 13.0
+  WalletTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: WalletTests
+    settings:
+      groups: [commonSettings]
+      base: 
+        PRODUCT_BUNDLE_IDENTIFIER: toshihiro.yamazaki.com.WalletTests
+        INFOPLIST_FILE: WalletTests/Info.plist
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/Wallet.app/Wallet
+  WalletUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: WalletUITests
+    settings:
+      groups: [commonSettings]
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: toshihiro.yamazaki.com.WalletUITests
+        INFOPLIST_FILE: WalletUITests/Info.plist
+        TEST_TARGET_NAME: Wallet
+      
