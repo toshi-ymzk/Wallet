@@ -19,6 +19,8 @@ targets:
     type: bundle.unit-test
     platform: iOS
     sources: WalletTests
+    dependencies:
+      - target: Wallet
     settings:
       groups: [commonSettings]
       base: 
@@ -35,4 +37,20 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: toshihiro.yamazaki.com.WalletUITests
         INFOPLIST_FILE: WalletUITests/Info.plist
         TEST_TARGET_NAME: Wallet
-      
+schemes:
+  Wallet:
+    build:
+      targets:
+        Wallet: all
+        WalletTests: [test]
+        WalletUITests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
