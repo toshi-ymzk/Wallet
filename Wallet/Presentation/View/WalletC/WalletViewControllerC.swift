@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import RxSwift
+import Combine
 
 class WalletViewControllerC: UIViewController {
     
@@ -19,13 +19,10 @@ class WalletViewControllerC: UIViewController {
     
     @IBOutlet var collectionView: UICollectionView!
     
-    private let disposeBag = DisposeBag()
+    private var cancellables = Set<AnyCancellable>()
     
     override public var preferredStatusBarStyle: UIStatusBarStyle {
-        if #available(iOS 13, *) {
-            return .darkContent
-        }
-        return .default
+        return .darkContent
     }
     
     override func viewDidLoad() {
@@ -47,12 +44,9 @@ class WalletViewControllerC: UIViewController {
     }
     
     private func bind() {
-        viewModel.paymentMethods.drive(onNext: { [weak self] methods in
+        viewModel.$paymentMethods.sink { [weak self] methods in
             self?.collectionView.reloadData()
-        }).disposed(by: disposeBag)
-        
-        viewModel.currentOffsetX.bind { offsetX in
-        }.disposed(by: disposeBag)
+        }.store(in: &cancellables)
     }
     
     @IBAction func dismiss() {
@@ -63,7 +57,7 @@ class WalletViewControllerC: UIViewController {
 extension WalletViewControllerC: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.methods.count
+        return viewModel.paymentMethods.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -71,8 +65,8 @@ extension WalletViewControllerC: UICollectionViewDataSource {
             withReuseIdentifier: WalletCellC.className, for: indexPath) as? WalletCellC else {
                 return collectionView.dequeueDefaultCell(indexPath: indexPath)
         }
-        if indexPath.item < viewModel.methods.count {
-            let method = viewModel.methods[indexPath.item]
+        if indexPath.item < viewModel.paymentMethods.count {
+            let method = viewModel.paymentMethods[indexPath.item]
             let cardSize = CGSize(width: viewModel.cardWidth, height: viewModel.cardHeight)
             cell.layout(method: method, cardSize: cardSize, cardPosition: viewModel.cardPosition)
         }
@@ -94,11 +88,11 @@ extension WalletViewControllerC: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard indexPath.item < viewModel.methods.count else {
+        guard indexPath.item < viewModel.paymentMethods.count else {
             return
         }
         viewModel.selectedIndex = indexPath.item
-        let method = viewModel.methods[indexPath.item]
+        let method = viewModel.paymentMethods[indexPath.item]
         let vm = WalletDetailViewModel(paymentMethod: method)
         let vc = WalletDetailViewController()
         vc.viewModel = vm

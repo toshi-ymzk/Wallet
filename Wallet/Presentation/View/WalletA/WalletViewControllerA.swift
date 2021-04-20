@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import RxSwift
+import Combine
 
 class WalletViewControllerA: UIViewController {
     
@@ -21,13 +21,10 @@ class WalletViewControllerA: UIViewController {
     @IBOutlet var pageControl: UIPageControl!
     @IBOutlet var collectionViewHeight: NSLayoutConstraint!
     
-    private let disposeBag = DisposeBag()
+    private var cancellables = Set<AnyCancellable>()
     
     override public var preferredStatusBarStyle: UIStatusBarStyle {
-        if #available(iOS 13, *) {
-            return .darkContent
-        }
-        return .default
+        return .darkContent
     }
     
     override func viewDidLoad() {
@@ -52,18 +49,18 @@ class WalletViewControllerA: UIViewController {
     }
     
     private func bind() {
-        viewModel.paymentMethods.bind { [weak self] _ in
+        viewModel.$paymentMethods.sink { [weak self] _ in
             self?.collectionView.reloadData()
             self?.setPageControl(current: 0, count: self?.viewModel.pageCount ?? 0)
-        }.disposed(by: disposeBag)
+        }.store(in: &cancellables)
         
-        viewModel.currentPage.bind { [weak self] page in
+        viewModel.$currentPage.sink { [weak self] page in
             self?.setPageControl(current: page, count: nil)
-        }.disposed(by: disposeBag)
+        }.store(in: &cancellables)
         
-        viewModel.currentOffsetX.bind { [weak self] offsetX in
+        viewModel.$currentOffsetX.sink { [weak self] offsetX in
             self?.transformCells()
-        }.disposed(by: disposeBag)
+        }.store(in: &cancellables)
     }
     
     private func setPageControl(current: Int, count: Int?) {
@@ -76,7 +73,7 @@ class WalletViewControllerA: UIViewController {
     func transformCells() {
         for i in 0..<viewModel.pageCount {
             var transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
-            if i == viewModel.currentPage.value {
+            if i == viewModel.currentPage {
                 transform = CGAffineTransform(scaleX: 1, y: 1)
             }
             DispatchQueue.main.async {
@@ -104,12 +101,12 @@ extension WalletViewControllerA: UICollectionViewDataSource {
             for: indexPath) as? WalletViewCellA else {
                 return collectionView.dequeueDefaultCell(indexPath: indexPath)
         }
-        if indexPath.item < viewModel.paymentMethods.value.count {
-            let method = viewModel.paymentMethods.value[indexPath.item]
+        if indexPath.item < viewModel.paymentMethods.count {
+            let method = viewModel.paymentMethods[indexPath.item]
             let cardSize = CGSize(width: viewModel.cellWidth, height: viewModel.cellHeight)
             cell.paymentMethodView.layout(method: method, cardSize: cardSize)
         }
-        cell.transform = indexPath.item == viewModel.currentPage.value ?
+        cell.transform = indexPath.item == viewModel.currentPage ?
             CGAffineTransform(scaleX: 1, y: 1) : CGAffineTransform(scaleX: 0.9, y: 0.9)
         return cell
     }
@@ -131,23 +128,23 @@ extension WalletViewControllerA: UICollectionViewDelegateFlowLayout {
 extension WalletViewControllerA: UIScrollViewDelegate {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let offsetDiff = abs(scrollView.contentOffset.x - viewModel.currentOffsetX.value)
-        viewModel.currentOffsetX.accept(scrollView.contentOffset.x)
+        let offsetDiff = abs(scrollView.contentOffset.x - viewModel.currentOffsetX)
+        viewModel.currentOffsetX = scrollView.contentOffset.x
         let threshold = viewModel.cellWidth + viewModel.cellSpace
         // Exclude big offset change caused by deceleration
         if offsetDiff < 100 {
             // Calculate target page
             let targetX = scrollView.contentOffset.x + threshold / 2
             let page = Int(floor(targetX / threshold))
-            if viewModel.currentPage.value != page {
-                viewModel.currentPage.accept(page)
+            if viewModel.currentPage != page {
+                viewModel.currentPage = page
             }
         }
     }
     
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         let threshold = viewModel.cellWidth + viewModel.cellSpace
-        var page = viewModel.currentPage.value
+        var page = viewModel.currentPage
         if velocity.x > 0 {
             page += 1
             if page >= viewModel.pageCount {

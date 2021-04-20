@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import RxSwift
+import Combine
 
 class WalletViewControllerB: UIViewController {
     
@@ -22,13 +22,10 @@ class WalletViewControllerB: UIViewController {
     
     var collectionViewDidAppeared = false
     
-    private let disposeBag = DisposeBag()
+    private var cancellables = Set<AnyCancellable>()
     
     override public var preferredStatusBarStyle: UIStatusBarStyle {
-        if #available(iOS 13, *) {
-            return .darkContent
-        }
-        return .default
+        return .darkContent
     }
     
     override func viewDidLoad() {
@@ -53,34 +50,29 @@ class WalletViewControllerB: UIViewController {
     }
     
     private func bind() {
-        viewModel.paymentMethods
-            .share(replay: 1, scope: .whileConnected)
-            .subscribe(onNext: { [weak self] methods in
-                DispatchQueue.main.async {
-                    self?.collectionView.reloadData()
-                    UIView.animate(withDuration: 10, delay: 0, options: .curveEaseInOut, animations: {
-                        self?.collectionView.alpha = 1
-                        self?.selectedMethodView.alpha = 1
-                    }, completion: { _ in
-                        self?.collectionViewDidAppeared = true
-                    })
-                }
-            }).disposed(by: disposeBag)
+        viewModel.$paymentMethods.sink { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.collectionView.reloadData()
+                UIView.animate(withDuration: 10, delay: 0, options: .curveEaseInOut, animations: {
+                    self?.collectionView.alpha = 1
+                    self?.selectedMethodView.alpha = 1
+                }, completion: { _ in
+                    self?.collectionViewDidAppeared = true
+                })
+            }
+        }.store(in: &cancellables)
         
-        Observable.zip(viewModel.selectedMethod.skip(1), viewModel.selectedMethod)
-            .share(replay: 1, scope: .whileConnected)
-            .subscribe(onNext: { [weak self] methods in
-                let (current, previous) = methods
-                guard let s = self, let method = current else { return }
-                let cardSize = CGSize(width: s.viewModel.selectedMethodViewWidth, height: s.viewModel.selectedMethodViewHeight)
-                DispatchQueue.main.async {
-                    self?.selectedMethodView.layoutWithAnimation(method: method,
-                                                                 previousMethod: previous,
-                                                                 cardSize: cardSize,
-                                                                 fontSize: 20)
-                    self?.collectionView.reloadData()
-                }
-            }).disposed(by: disposeBag)
+        viewModel.$selectedMethod.sink { [weak self] (previous, current) in
+            guard let s = self, let method = current else { return }
+            let cardSize = CGSize(width: s.viewModel.selectedMethodViewWidth, height: s.viewModel.selectedMethodViewHeight)
+            DispatchQueue.main.async {
+                self?.selectedMethodView.layoutWithAnimation(method: method,
+                                                             previousMethod: previous,
+                                                             cardSize: cardSize,
+                                                             fontSize: 20)
+                self?.collectionView.reloadData()
+            }
+        }.store(in: &cancellables)
     }
     
     private func showCellWithAnimation(cell: UICollectionViewCell, indexPath: IndexPath) {

@@ -7,8 +7,7 @@
 //
 
 import UIKit
-import RxSwift
-import RxCocoa
+import Combine
 
 class  WalletDetailViewModel {
     
@@ -16,12 +15,9 @@ class  WalletDetailViewModel {
     lazy var cardWidth = UIScreen.main.bounds.width - 30 * 2
     lazy var cardHeight = floor(cardWidth * cardRatio)
     
-    private var _paymentMethod: BehaviorRelay<PaymentMethodProtocol>
-    var paymentMethod: Driver<PaymentMethodProtocol> {
-        return _paymentMethod.asDriver()
-    }
+    @Published var paymentMethod: PaymentMethodProtocol
     
     init(paymentMethod: PaymentMethodProtocol) {
-        _paymentMethod = BehaviorRelay<PaymentMethodProtocol>(value: paymentMethod)
+        self.paymentMethod = paymentMethod
     }
 }

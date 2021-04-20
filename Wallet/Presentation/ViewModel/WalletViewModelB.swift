@@ -7,8 +7,7 @@
 //
 
 import UIKit
-import RxSwift
-import RxCocoa
+import Combine
 
 class WalletViewModelB {
     
@@ -23,13 +22,9 @@ class WalletViewModelB {
     lazy var selectedMethodViewWidth = UIScreen.main.bounds.width - sectionInset * 2
     lazy var selectedMethodViewHeight = floor(selectedMethodViewWidth * cardRatio)
     
-    private var _selectedMethod = BehaviorRelay<PaymentMethodProtocol?>(value: nil)
-    var selectedMethod: Observable<PaymentMethodProtocol?> {
-        return _selectedMethod.asObservable()
-    }
     var selectedIndex = 0 {
         didSet {
-            _selectedMethod.accept(methods[selectedIndex])
+            selectedMethod = (selectedMethod.1, paymentMethods[selectedIndex])
         }
     }
     
@@ -39,34 +34,37 @@ class WalletViewModelB {
     let sectionCount: Int = 1
     
     var unselectedMethods: [PaymentMethodProtocol] {
-        return methods.enumerated()
+        return paymentMethods.enumerated()
             .filter({ $0.offset != selectedIndex })
             .map({ $0.element })
     }
     
-    private var methods: [PaymentMethodProtocol] = []
-    private var _paymentMethods = PublishRelay<[PaymentMethodProtocol]>()
-    var paymentMethods: Observable<[PaymentMethodProtocol]> {
-        return _paymentMethods.asObservable()
-    }
-    var paymentMethodError = PublishRelay<Error>()
+    @Published var selectedMethod: (PaymentMethodProtocol?, PaymentMethodProtocol?) = (nil, nil)
+    @Published var paymentMethods = [PaymentMethodProtocol]()
+    @Published var paymentMethodError = NSError() as Error
     
-    private let disposeBag = DisposeBag()
+    private var cancellables = Set<AnyCancellable>()
     
     init(useCase: WalletUseCase) {
         self.useCase = useCase
     }
     
     func getPaymentMethods() {
-        useCase.getPaymentMethods().subscribe(onSuccess: { [weak self] res in
-            self?.methods = res
-            self?._paymentMethods.accept(res)
-            if let method = res.first {
-                self?._selectedMethod.accept(method)
-            }
-        }) { [weak self] err in
-            self?.paymentMethodError.accept(err)
-        }.disposed(by: disposeBag)
+        useCase.getPaymentMethods()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let err):
+                    self?.paymentMethodError = err
+                }
+            } receiveValue: { [weak self] methods in
+                self?.paymentMethods = methods
+                if let method = methods.first {
+                    self?.selectedMethod = (self?.selectedMethod.0, method)
+                }
+            }.store(in: &cancellables)
     }
     
     
@@ -80,7 +78,7 @@ class WalletViewModelB {
             return
         }
         let method = unselectedMethods[index.item]
-        methods.enumerated().forEach {
+        paymentMethods.enumerated().forEach {
             if $0.element.sequence == method.sequence {
                 selectedIndex = $0.offset
             }
@@ -92,9 +90,9 @@ class WalletViewModelB {
             return
         }
         let method = unselectedMethods[index.item]
-        methods.enumerated().reversed().forEach {
+        paymentMethods.enumerated().reversed().forEach {
             if $0.element.sequence == method.sequence {
-                methods.remove(at: $0.offset)
+                paymentMethods.remove(at: $0.offset)
             }
         }
     }

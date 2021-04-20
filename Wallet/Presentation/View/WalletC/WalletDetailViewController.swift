@@ -7,8 +7,7 @@
 //
 
 import UIKit
-import RxSwift
-import RxCocoa
+import Combine
 
 class WalletDetailViewController: UIViewController {
     
@@ -30,13 +29,10 @@ class WalletDetailViewController: UIViewController {
         }
     }
     
-    private let disposeBag = DisposeBag()
+    private var cancellables = Set<AnyCancellable>()
     
     override public var preferredStatusBarStyle: UIStatusBarStyle {
-        if #available(iOS 13, *) {
-            return .darkContent
-        }
-        return .default
+        return .darkContent
     }
     
     override func viewDidLoad() {
@@ -53,9 +49,9 @@ class WalletDetailViewController: UIViewController {
     
     func subscribe(viewModel: WalletDetailViewModel) {
         let cardSize = CGSize(width: viewModel.cardWidth, height: viewModel.cardHeight)
-        viewModel.paymentMethod.drive(onNext: { [weak self] method in
+        viewModel.$paymentMethod.sink { [weak self] method in
             self?.paymentMethodView.layout(method: method, cardSize: cardSize)
-        }).disposed(by: disposeBag)
+        }.store(in: &cancellables)
     }
     
     @IBAction func dismiss() {

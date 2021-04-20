@@ -6,7 +6,7 @@
 //  Copyright © 2019 Toshihiro Yamazaki. All rights reserved.
 //
 
-import RxSwift
+import Combine
 
 class WalletUseCase {
     
@@ -16,15 +16,16 @@ class WalletUseCase {
         self.dataStore = dataStore
     }
     
-    func getPaymentMethods() -> Single<[PaymentMethodProtocol]> {
-        return Single<[PaymentMethodProtocol]>.create(subscribe: { [weak self] observer -> Disposable in
-            self?.dataStore.getPaymentMethods(success: { res in
-                let methods = /*res.bankAccounts as [PaymentMethodProtocol] +*/ res.creditCards as [PaymentMethodProtocol]
-                observer(.success(methods))
-            }, failure: { err in
-                observer(.error(err))
-            })
-            return Disposables.create()
-        })
+    func getPaymentMethods() -> AnyPublisher<[PaymentMethodProtocol], Error> {
+        return Deferred { [weak self] in
+            Future { promise in
+                self?.dataStore.getPaymentMethods(success: { res in
+                    let methods = /*res.bankAccounts as [PaymentMethodProtocol] +*/ res.creditCards as [PaymentMethodProtocol]
+                    promise(.success(methods))
+                }, failure: { err in
+                    promise(.failure(err))
+                })
+            }
+        }.eraseToAnyPublisher()
     }
 }

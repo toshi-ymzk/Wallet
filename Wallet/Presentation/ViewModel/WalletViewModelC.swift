@@ -7,8 +7,7 @@
 //
 
 import UIKit
-import RxSwift
-import RxCocoa
+import Combine
 
 class WalletViewModelC {
     
@@ -21,34 +20,30 @@ class WalletViewModelC {
     lazy var cardWidth = UIScreen.width - cardPosition.x + 20
     lazy var cardHeight = floor(cardWidth * cardRatio)
     
-    var currentOffsetX = BehaviorRelay<CGFloat>(value: 0)
     let sectionCount: Int = 1
-    
     var selectedIndex = 0
     
-    var methods: [PaymentMethodProtocol] {
-        return _paymentMethods.value
-    }
-    private var _paymentMethods = BehaviorRelay<[PaymentMethodProtocol]>(value: [])
-    var paymentMethods: Driver<[PaymentMethodProtocol]> {
-        return _paymentMethods.asDriver()
-    }
-    private var _paymentMethodError = PublishRelay<Error>()
-    var paymentMethodError: Signal<Error> {
-        return _paymentMethodError.asSignal()
-    }
+    @Published var paymentMethods = [PaymentMethodProtocol]()
+    @Published var paymentMethodError = NSError() as Error
     
-    private let disposeBag = DisposeBag()
+    private var cancellables = Set<AnyCancellable>()
     
     init(useCase: WalletUseCase) {
         self.useCase = useCase
     }
     
     func getPaymentMethods() {
-        useCase.getPaymentMethods().subscribe(onSuccess: { [weak self] res in
-            self?._paymentMethods.accept(res)
-        }) { [weak self] err in
-            self?._paymentMethodError.accept(err)
-        }.disposed(by: disposeBag)
+        useCase.getPaymentMethods()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let err):
+                    self?.paymentMethodError = err
+                }
+            } receiveValue: { [weak self] methods in
+                self?.paymentMethods = methods
+            }.store(in: &cancellables)
     }
 }
