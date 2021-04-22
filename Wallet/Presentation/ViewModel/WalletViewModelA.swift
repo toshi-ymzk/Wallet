@@ -76,14 +76,6 @@ class WalletViewModelA: ViewModelType {
         }
     }
 
-    private func transformCells() {
-        for i in 0..<paymentMethods.count {
-            let scale: CGFloat = i == currentPage ? 1 : 0.9
-            let transform = CGAffineTransform(scaleX: scale, y: scale)
-            output = .transformCell(index: i, transform: transform)
-        }
-    }
-
     private func getPaymentMethods() {
         useCase.getPaymentMethods()
             .receive(on: DispatchQueue.main)
@@ -99,6 +91,14 @@ class WalletViewModelA: ViewModelType {
                 self?.output = .reload
                 self?.output = .setPage(currentPage: 0, pageCount: methods.count)
             }.store(in: &cancellables)
+    }
+
+    private func transformCells() {
+        for i in 0..<paymentMethods.count {
+            let scale: CGFloat = i == currentPage ? 1 : 0.9
+            let transform = CGAffineTransform(scaleX: scale, y: scale)
+            output = .transformCell(index: i, transform: transform)
+        }
     }
 
     private func targetOffsetX(velocityX: CGFloat = 0, offsetX: CGFloat) -> CGFloat {
