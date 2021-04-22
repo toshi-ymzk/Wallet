@@ -9,30 +9,46 @@
 import UIKit
 import Combine
 
-class WalletViewModelC {
-    
+class WalletViewModelC: ViewModelType {
+
     let useCase: WalletUseCase
-    
+
     let cardRatio: CGFloat = 1 / 1.618
     let cellSpace: CGFloat = 0
-    
+
     let cardPosition = CGPoint(x: 80, y: 0)
     lazy var cardWidth = UIScreen.width - cardPosition.x + 20
     lazy var cardHeight = floor(cardWidth * cardRatio)
-    
-    let sectionCount: Int = 1
+
     var selectedIndex = 0
-    
-    @Published var paymentMethods = [PaymentMethodProtocol]()
-    @Published var paymentMethodError = NSError() as Error
+
+    var paymentMethods = [PaymentMethodProtocol]()
     
     private var cancellables = Set<AnyCancellable>()
+
+    enum Input {
+        case viewDidLoad
+    }
+    
+    enum Output {
+        case reload
+        case showError(Error)
+    }
+
+    @Published var output: Output?
     
     init(useCase: WalletUseCase) {
         self.useCase = useCase
     }
-    
-    func getPaymentMethods() {
+
+    func apply(input: Input) {
+        switch input {
+        case .viewDidLoad:
+            getPaymentMethods()
+        }
+    }
+
+    private func getPaymentMethods() {
         useCase.getPaymentMethods()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
@@ -40,10 +56,11 @@ class WalletViewModelC {
                 case .finished:
                     break
                 case .failure(let err):
-                    self?.paymentMethodError = err
+                    self?.output = .showError(err)
                 }
             } receiveValue: { [weak self] methods in
                 self?.paymentMethods = methods
+                self?.output = .reload
             }.store(in: &cancellables)
     }
 }

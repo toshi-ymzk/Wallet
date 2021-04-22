@@ -29,6 +29,8 @@ class WalletViewControllerC: UIViewController {
         super.viewDidLoad()
         
         setupView()
+        bind()
+        viewModel.apply(input: .viewDidLoad)
     }
     
     private func setupView() {
@@ -37,15 +39,19 @@ class WalletViewControllerC: UIViewController {
         collectionView.registerClass(WalletCellC.self)
         collectionView.dataSource = self
         collectionView.delegate = self
-        
-        bind()
-        
-        viewModel.getPaymentMethods()
     }
     
     private func bind() {
-        viewModel.$paymentMethods.sink { [weak self] methods in
-            self?.collectionView.reloadData()
+        viewModel.$output.sink { [weak self] output in
+            guard let output = output else { return }
+            switch output {
+            case .reload:
+                self?.collectionView.reloadData()
+            case .showError(let err):
+                let alert = UIAlertController(title: nil, message: err.localizedDescription, preferredStyle: .alert)
+                alert.addAction(.init(title: "OK", style: .default, handler: nil))
+                self?.present(alert, animated: true)
+            }
         }.store(in: &cancellables)
     }
     
@@ -75,7 +81,7 @@ extension WalletViewControllerC: UICollectionViewDataSource {
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return viewModel.sectionCount
+        return 1
     }
 }
 
@@ -99,20 +105,5 @@ extension WalletViewControllerC: UICollectionViewDelegateFlowLayout {
         vc.transitioningDelegate = vc
         vc.modalPresentationStyle = .fullScreen
         present(vc, animated: true)
-    }
-}
-
-extension WalletViewControllerC: UIScrollViewDelegate {
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-    }
-    
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-    }
-    
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-    }
-    
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
     }
 }

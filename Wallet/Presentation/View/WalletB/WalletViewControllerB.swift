@@ -10,30 +10,30 @@ import UIKit
 import Combine
 
 class WalletViewControllerB: UIViewController {
-    
+
     lazy var viewModel: WalletViewModelB = {
         let useCase = WalletUseCase(dataStore: WalletDataStore())
         let viewModel = WalletViewModelB(useCase: useCase)
         return viewModel
     }()
-    
+
     @IBOutlet var selectedMethodView: PaymentMethodView!
     @IBOutlet var collectionView: UICollectionView!
-    
-    var collectionViewDidAppeared = false
-    
+
     private var cancellables = Set<AnyCancellable>()
-    
+
     override public var preferredStatusBarStyle: UIStatusBarStyle {
         return .darkContent
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupView()
+        bind()
+        viewModel.apply(input: .viewDidLoad)
     }
-    
+
     private func setupView() {
         collectionView.registerClass(WalletViewCellB.self)
         collectionView.dataSource = self
@@ -41,66 +41,50 @@ class WalletViewControllerB: UIViewController {
         collectionView.delaysContentTouches = false
         collectionView.contentInset = .zero
         collectionView.reloadData()
-        collectionView.alpha = 0
-        selectedMethodView.alpha = 0
-        
-        bind()
-        
-        viewModel.getPaymentMethods()
     }
-    
+
     private func bind() {
-        viewModel.$paymentMethods.sink { [weak self] _ in
-            DispatchQueue.main.async {
-                self?.collectionView.reloadData()
-                UIView.animate(withDuration: 10, delay: 0, options: .curveEaseInOut, animations: {
-                    self?.collectionView.alpha = 1
-                    self?.selectedMethodView.alpha = 1
-                }, completion: { _ in
-                    self?.collectionViewDidAppeared = true
+        viewModel.$output.sink { [weak self] output in
+            guard let output = output else { return }
+            switch output {
+            case .reload:
+                DispatchQueue.main.async {
+                    self?.collectionView.reloadData()
+                }
+            case .layoutSelectedMethodView(let previous, let current):
+                guard let s = self, let method = current else { return }
+                let cardSize = CGSize(width: s.viewModel.selectedMethodViewWidth, height: s.viewModel.selectedMethodViewHeight)
+                DispatchQueue.main.async {
+                    self?.selectedMethodView.layoutWithAnimation(method: method,
+                                                                 previousMethod: previous,
+                                                                 cardSize: cardSize,
+                                                                 fontSize: 20)
+                }
+            case .deleteCell(let index):
+                self?.collectionView.performBatchUpdates({
+                    self?.collectionView.deleteItems(at: [index])
+                })
+            case .replaceCell(let deleteIndex, let insertIndex):
+                self?.collectionView.performBatchUpdates({
+                    self?.collectionView.deleteItems(at: [deleteIndex])
+                    self?.collectionView.insertItems(at: [insertIndex])
                 })
             }
         }.store(in: &cancellables)
-        
-        viewModel.$selectedMethod.sink { [weak self] (previous, current) in
-            guard let s = self, let method = current else { return }
-            let cardSize = CGSize(width: s.viewModel.selectedMethodViewWidth, height: s.viewModel.selectedMethodViewHeight)
-            DispatchQueue.main.async {
-                self?.selectedMethodView.layoutWithAnimation(method: method,
-                                                             previousMethod: previous,
-                                                             cardSize: cardSize,
-                                                             fontSize: 20)
-                self?.collectionView.reloadData()
-            }
-        }.store(in: &cancellables)
     }
-    
-    private func showCellWithAnimation(cell: UICollectionViewCell, indexPath: IndexPath) {
-        cell.alpha = 0
-        cell.frame.origin.y += 10
-        let delay = TimeInterval(CGFloat(indexPath.item) * 0.1)
-        UIView.animate(withDuration: 0.3, delay: delay, options: .curveEaseInOut, animations: {
-            cell.alpha = 1
-            cell.frame.origin.y -= 10
-        })
+
+    private func animateCell(cell: UICollectionViewCell, indexPath: IndexPath) {
+        DispatchQueue.main.async {
+            cell.alpha = 0
+            cell.frame.origin.y += 10
+            let delay = TimeInterval(CGFloat(indexPath.item) * 0.1)
+            UIView.animate(withDuration: 0.3, delay: delay, options: .curveEaseInOut, animations: {
+                cell.alpha = 1
+                cell.frame.origin.y -= 10
+            })
+        }
     }
-    
-    private func replaceCell(index: IndexPath) {
-        let insertIndex = viewModel.getInsertIndex(index: index)
-        collectionView.performBatchUpdates({
-            self.collectionView.deleteItems(at: [index])
-            self.viewModel.setSelectedIndex(index: index)
-            self.collectionView.insertItems(at: [insertIndex])
-        })
-    }
-    
-    private func deleteCell(index: IndexPath) {
-        collectionView.performBatchUpdates({
-            self.viewModel.deleteMethod(index: index)
-            self.collectionView.deleteItems(at: [index])
-        })
-    }
-    
+
     @IBAction func dismiss() {
         dismiss(animated: true)
     }
@@ -113,25 +97,20 @@ extension WalletViewControllerB: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: WalletViewCellB.className, for: indexPath) as? WalletViewCellB else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WalletViewCellB.className, for: indexPath) as? WalletViewCellB,
+              indexPath.item < viewModel.unselectedMethods.count else {
                 return collectionView.dequeueDefaultCell(indexPath: indexPath)
         }
-        if indexPath.item < viewModel.unselectedMethods.count {
-            let method = viewModel.unselectedMethods[indexPath.item]
-            let cardSize = CGSize(width: viewModel.cellWidth, height: viewModel.cellHeight)
-            cell.paymentMethodView.layout(method: method,
-                                          cardSize: cardSize,
-                                          fontSize: 12)
-        }
-        if !self.collectionViewDidAppeared {
-            showCellWithAnimation(cell: cell, indexPath: indexPath)
+        let method = viewModel.unselectedMethods[indexPath.item]
+        cell.paymentMethodView.layout(method: method, cardSize: viewModel.cellSize, fontSize: 12)
+        if !self.viewModel.cellDidAppear {
+            animateCell(cell: cell, indexPath: indexPath)
         }
         return cell
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return viewModel.sectionCount
+        return 1
     }
 }
 
@@ -144,15 +123,13 @@ extension WalletViewControllerB: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
-        
         let alert = UIAlertController(title: "Payment Method", message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Set as a Default Card", style: .default, handler: { [weak self] _ in
-            self?.replaceCell(index: indexPath)
+            self?.viewModel.apply(input: .selectMethod(index: indexPath))
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { [weak self] _ in
-            self?.deleteCell(index: indexPath)
+            self?.viewModel.apply(input: .deleteMethod(index: indexPath))
         }))
         present(alert, animated: true)
     }
