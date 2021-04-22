@@ -9,15 +9,35 @@
 import UIKit
 import Combine
 
-class  WalletDetailViewModel {
-    
+class  WalletDetailViewModel: ViewModelType {
+
+    struct Argument {
+        let paymentMethod: PaymentMethodProtocol
+    }
+    private let args: Argument
+
     let cardRatio: CGFloat = 1 / 1.618
     lazy var cardWidth = UIScreen.main.bounds.width - 30 * 2
     lazy var cardHeight = floor(cardWidth * cardRatio)
-    
-    @Published var paymentMethod: PaymentMethodProtocol
-    
-    init(paymentMethod: PaymentMethodProtocol) {
-        self.paymentMethod = paymentMethod
+
+    enum Input {
+        case viewDidLoad
+    }
+
+    enum Output {
+        case layoutPaymentMethodView(method: PaymentMethodProtocol, size: CGSize)
+    }
+
+    @Published var output: Output?
+
+    init(args: Argument) {
+        self.args = args
+    }
+
+    func apply(input: Input) {
+        switch input {
+        case .viewDidLoad:
+            output = .layoutPaymentMethodView(method: args.paymentMethod, size: .init(width: cardWidth, height: cardHeight))
+        }
     }
 }

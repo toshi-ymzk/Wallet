@@ -99,9 +99,7 @@ extension WalletViewControllerC: UICollectionViewDelegateFlowLayout {
         }
         viewModel.selectedIndex = indexPath.item
         let method = viewModel.paymentMethods[indexPath.item]
-        let vm = WalletDetailViewModel(paymentMethod: method)
-        let vc = WalletDetailViewController()
-        vc.viewModel = vm
+        let vc = WalletDetailViewController(args: .init(paymentMethod: method))
         vc.transitioningDelegate = vc
         vc.modalPresentationStyle = .fullScreen
         present(vc, animated: true)
