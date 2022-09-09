@@ -42,7 +42,10 @@ class WalletViewModelA: ViewModelType {
         case showError(Error)
     }
 
-    @Published var output: Output?
+    @Published private var _output: Output?
+    var output: Published<Output?>.Publisher {
+        return $_output
+    }
 
     init(useCase: WalletUseCase) {
         self.useCase = useCase
@@ -63,16 +66,16 @@ class WalletViewModelA: ViewModelType {
             let page = targetPage(offsetX: offsetX)
             if currentPage != page {
                 currentPage = page
-                output = .setPage(currentPage: currentPage, pageCount: paymentMethods.count)
+                _output = .setPage(currentPage: currentPage, pageCount: paymentMethods.count)
             }
         case .scrollViewWillEndDragging(let velocityX, let offsetPointer):
             offsetPointer.pointee.x = targetOffsetX(velocityX: velocityX, offsetX: offsetPointer.pointee.x)
         case .scrollViewDidEndDragging(let offsetX, let decelerate):
             if !decelerate {
-                output = .setContentOffset(offsetX: targetOffsetX(offsetX: offsetX))
+                _output = .setContentOffset(offsetX: targetOffsetX(offsetX: offsetX))
             }
         case .scrollViewDidEndDecelerating(let offsetX):
-            output = .setContentOffset(offsetX: targetOffsetX(offsetX: offsetX))
+            _output = .setContentOffset(offsetX: targetOffsetX(offsetX: offsetX))
         }
     }
 
@@ -84,12 +87,12 @@ class WalletViewModelA: ViewModelType {
                 case .finished:
                     break
                 case .failure(let err):
-                    self?.output = .showError(err)
+                    self?._output = .showError(err)
                 }
             } receiveValue: { [weak self] methods in
                 self?.paymentMethods = methods
-                self?.output = .reload
-                self?.output = .setPage(currentPage: 0, pageCount: methods.count)
+                self?._output = .reload
+                self?._output = .setPage(currentPage: 0, pageCount: methods.count)
             }.store(in: &cancellables)
     }
 
@@ -97,7 +100,7 @@ class WalletViewModelA: ViewModelType {
         for i in 0..<paymentMethods.count {
             let scale: CGFloat = i == currentPage ? 1 : 0.9
             let transform = CGAffineTransform(scaleX: scale, y: scale)
-            output = .transformCell(index: i, transform: transform)
+            _output = .transformCell(index: i, transform: transform)
         }
     }
 

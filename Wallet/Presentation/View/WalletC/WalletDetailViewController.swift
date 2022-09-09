@@ -53,7 +53,7 @@ class WalletDetailViewController: UIViewController {
     }
 
     private func bind() {
-        viewModel.$output.sink { [weak self] output in
+        viewModel.output.sink { [weak self] output in
             switch output {
             case .layoutPaymentMethodView(let method, let size):
                 self?.paymentMethodView.layout(method: method, cardSize: size)

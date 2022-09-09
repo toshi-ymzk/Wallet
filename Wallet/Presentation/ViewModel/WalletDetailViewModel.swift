@@ -28,7 +28,10 @@ class  WalletDetailViewModel: ViewModelType {
         case layoutPaymentMethodView(method: PaymentMethodProtocol, size: CGSize)
     }
 
-    @Published var output: Output?
+    @Published var _output: Output?
+    var output: Published<Output?>.Publisher {
+        return $_output
+    }
 
     init(args: Argument) {
         self.args = args
@@ -37,7 +40,7 @@ class  WalletDetailViewModel: ViewModelType {
     func apply(input: Input) {
         switch input {
         case .viewDidLoad:
-            output = .layoutPaymentMethodView(method: args.paymentMethod, size: .init(width: cardWidth, height: cardHeight))
+            _output = .layoutPaymentMethodView(method: args.paymentMethod, size: .init(width: cardWidth, height: cardHeight))
         }
     }
 }

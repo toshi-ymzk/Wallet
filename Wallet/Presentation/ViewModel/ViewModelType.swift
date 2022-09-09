@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 public protocol ViewModelType {
 
@@ -13,5 +14,5 @@ public protocol ViewModelType {
     func apply(input: Input)
 
     associatedtype Output
-    var output: Output? { get }
+    var output: Published<Output?>.Publisher { get }
 }

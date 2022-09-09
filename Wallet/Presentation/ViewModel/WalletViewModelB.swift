@@ -55,7 +55,10 @@ class WalletViewModelB: ViewModelType {
         case replaceCell(deleteIndex: IndexPath, insertIndex: IndexPath)
     }
 
-    @Published var output: Output?
+    @Published var _output: Output?
+    var output: Published<Output?>.Publisher {
+        return $_output
+    }
     
     init(useCase: WalletUseCase) {
         self.useCase = useCase
@@ -85,9 +88,9 @@ class WalletViewModelB: ViewModelType {
             } receiveValue: { [weak self] methods in
                 self?.paymentMethods = methods
                 if let method = methods.first {
-                    self?.output = .layoutSelectedMethodView(previous: nil, current: method)
+                    self?._output = .layoutSelectedMethodView(previous: nil, current: method)
                 }
-                self?.output = .reload
+                self?._output = .reload
                 DispatchQueue.main.asyncAfter(deadline: .now() + Double(methods.count) * 0.1) {
                     self?.cellDidAppear = true
                 }
@@ -104,8 +107,8 @@ class WalletViewModelB: ViewModelType {
             if $0.element.sequence == method.sequence {
                 let previousIndex = selectedIndex
                 selectedIndex = $0.offset
-                output = .layoutSelectedMethodView(previous: paymentMethods[previousIndex], current: paymentMethods[selectedIndex])
-                output = .replaceCell(deleteIndex: index, insertIndex: insertIndex)
+                _output = .layoutSelectedMethodView(previous: paymentMethods[previousIndex], current: paymentMethods[selectedIndex])
+                _output = .replaceCell(deleteIndex: index, insertIndex: insertIndex)
             }
         }
     }
@@ -118,7 +121,7 @@ class WalletViewModelB: ViewModelType {
         paymentMethods.enumerated().reversed().forEach {
             if $0.element.sequence == method.sequence {
                 paymentMethods.remove(at: $0.offset)
-                output = .deleteCell(index: index)
+                _output = .deleteCell(index: index)
             }
         }
     }

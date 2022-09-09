@@ -35,7 +35,10 @@ class WalletViewModelC: ViewModelType {
         case showError(Error)
     }
 
-    @Published var output: Output?
+    @Published var _output: Output?
+    var output: Published<Output?>.Publisher {
+        return $_output
+    }
     
     init(useCase: WalletUseCase) {
         self.useCase = useCase
@@ -56,11 +59,11 @@ class WalletViewModelC: ViewModelType {
                 case .finished:
                     break
                 case .failure(let err):
-                    self?.output = .showError(err)
+                    self?._output = .showError(err)
                 }
             } receiveValue: { [weak self] methods in
                 self?.paymentMethods = methods
-                self?.output = .reload
+                self?._output = .reload
             }.store(in: &cancellables)
     }
 }

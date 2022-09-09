@@ -47,7 +47,7 @@ class WalletViewControllerA: UIViewController {
     }
 
     private func bind() {
-        viewModel.$output.sink { [weak self] output in
+        viewModel.output.sink { [weak self] output in
             guard let output = output else { return }
             switch output {
             case .reload:
